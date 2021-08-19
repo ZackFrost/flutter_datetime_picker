@@ -32,7 +32,7 @@ class DatePicker {
     DatePickerTheme theme,
     bool isDismissible: true,
     bool disableCancelButton : false,
-    String label,
+    Widget titleWidget,
   }) async {
     return await Navigator.push(
         context,
@@ -45,7 +45,7 @@ class DatePicker {
             theme: theme,
             isDismissible: isDismissible,
             disableCancelButton: disableCancelButton,
-            label: label,
+            titleWidget: titleWidget,
             barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
             pickerModel: DatePickerModel(
                 currentTime: currentTime, maxTime: maxTime, minTime: minTime, locale: locale)));
@@ -172,7 +172,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
     this.locale,
     this.isDismissible,
     this.disableCancelButton = false,
-    this.label,
+    this.titleWidget,
     RouteSettings settings,
     pickerModel,
   })  : this.pickerModel = pickerModel ?? DatePickerModel(),
@@ -188,7 +188,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
   final BasePickerModel pickerModel;
   final bool isDismissible;
   final bool disableCancelButton;
-  final String label;
+  final Widget titleWidget;
 
   @override
   Duration get transitionDuration => const Duration(milliseconds: 200);
@@ -221,7 +221,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
         onChanged: onChanged,
         locale: this.locale,
         route: this,
-        label: label,
+        titleWidget: titleWidget,
         disableCancelButton: disableCancelButton,
         pickerModel: pickerModel,
       ),
@@ -236,19 +236,14 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
 
 class _DatePickerComponent extends StatefulWidget {
   _DatePickerComponent(
-      {Key key, @required this.route, this.onChanged, this.locale, this.pickerModel, this.label, this.disableCancelButton = false});
+      {Key key, @required this.route, this.onChanged, this.locale, this.pickerModel, this.disableCancelButton = false, this.titleWidget, });
 
   final DateChangedCallback onChanged;
-
   final _DatePickerRoute route;
-
   final LocaleType locale;
-
   final BasePickerModel pickerModel;
-
-  final String label;
-
   final bool disableCancelButton;
+  final Widget titleWidget;
 
   @override
   State<StatefulWidget> createState() {
@@ -444,7 +439,6 @@ class _DatePickerState extends State<_DatePickerComponent> {
   Widget _renderTitleActionsView(DatePickerTheme theme) {
     String done = _localeDone();
     String cancel = _localeCancel();
-    String _label = widget.label ?? "";
     return Container(
       decoration: BoxDecoration(
         color: theme.headerColor ?? theme.backgroundColor ?? Colors.white,
@@ -454,13 +448,8 @@ class _DatePickerState extends State<_DatePickerComponent> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if(_label.isNotEmpty)
-          Container(
-            alignment: Alignment.center,
-            height: theme.titleHeight,
-            padding: EdgeInsets.only(left: 16, top: 10),
-            child: Text(_label, style: TextStyle(color: Colors.black38),),
-          ),
+          if(widget.titleWidget !=null)
+            widget.titleWidget,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
