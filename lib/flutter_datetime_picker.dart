@@ -445,7 +445,6 @@ class _DatePickerState extends State<_DatePickerComponent> {
     String cancel = _localeCancel();
     String _label = widget.label ?? "";
     return Container(
-      height: 90,
       decoration: BoxDecoration(
         color: theme.headerColor ?? theme.backgroundColor ?? Colors.white,
       ),
@@ -456,6 +455,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
         children: [
           if(_label.isNotEmpty)
           Container(
+            alignment: Alignment.center,
             height: theme.titleHeight,
             padding: EdgeInsets.only(left: 16, top: 10),
             child: Text(_label),
