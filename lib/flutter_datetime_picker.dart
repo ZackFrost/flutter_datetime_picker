@@ -375,68 +375,66 @@ class _DatePickerState extends State<_DatePickerComponent> {
   Widget _renderItemView(DatePickerTheme theme) {
     return Container(
       color: theme.backgroundColor ?? Colors.white,
-      child: Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              child: widget.pickerModel.layoutProportions()[0] > 0
-                  ? _renderColumnView(
-                  ValueKey(widget.pickerModel.currentLeftIndex()),
-                  theme,
-                  widget.pickerModel.leftStringAtIndex,
-                  leftScrollCtrl,
-                  widget.pickerModel.layoutProportions()[0], (index) {
-                widget.pickerModel.setLeftIndex(index);
-              }, (index) {
-                setState(() {
-                  refreshScrollOffset();
-                  _notifyDateChanged();
-                });
-              })
-                  : null,
-            ),
-            Text(
-              widget.pickerModel.leftDivider(),
-              style: theme.itemStyle,
-            ),
-            Container(
-              child: widget.pickerModel.layoutProportions()[1] > 0
-                  ? _renderColumnView(
-                  ValueKey(widget.pickerModel.currentLeftIndex()),
-                  theme,
-                  widget.pickerModel.middleStringAtIndex,
-                  middleScrollCtrl,
-                  widget.pickerModel.layoutProportions()[1], (index) {
-                widget.pickerModel.setMiddleIndex(index);
-              }, (index) {
-                setState(() {
-                  refreshScrollOffset();
-                  _notifyDateChanged();
-                });
-              })
-                  : null,
-            ),
-            Text(
-              widget.pickerModel.rightDivider(),
-              style: theme.itemStyle,
-            ),
-            Container(
-              child: widget.pickerModel.layoutProportions()[2] > 0
-                  ? _renderColumnView(
-                  ValueKey(widget.pickerModel.currentMiddleIndex() * 100 +
-                      widget.pickerModel.currentLeftIndex()),
-                  theme,
-                  widget.pickerModel.rightStringAtIndex,
-                  rightScrollCtrl,
-                  widget.pickerModel.layoutProportions()[2], (index) {
-                widget.pickerModel.setRightIndex(index);
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            child: widget.pickerModel.layoutProportions()[0] > 0
+                ? _renderColumnView(
+                ValueKey(widget.pickerModel.currentLeftIndex()),
+                theme,
+                widget.pickerModel.leftStringAtIndex,
+                leftScrollCtrl,
+                widget.pickerModel.layoutProportions()[0], (index) {
+              widget.pickerModel.setLeftIndex(index);
+            }, (index) {
+              setState(() {
+                refreshScrollOffset();
                 _notifyDateChanged();
-              }, null)
-                  : null,
-            ),
-          ],
-        ),
+              });
+            })
+                : null,
+          ),
+          Text(
+            widget.pickerModel.leftDivider(),
+            style: theme.itemStyle,
+          ),
+          Container(
+            child: widget.pickerModel.layoutProportions()[1] > 0
+                ? _renderColumnView(
+                ValueKey(widget.pickerModel.currentLeftIndex()),
+                theme,
+                widget.pickerModel.middleStringAtIndex,
+                middleScrollCtrl,
+                widget.pickerModel.layoutProportions()[1], (index) {
+              widget.pickerModel.setMiddleIndex(index);
+            }, (index) {
+              setState(() {
+                refreshScrollOffset();
+                _notifyDateChanged();
+              });
+            })
+                : null,
+          ),
+          Text(
+            widget.pickerModel.rightDivider(),
+            style: theme.itemStyle,
+          ),
+          Container(
+            child: widget.pickerModel.layoutProportions()[2] > 0
+                ? _renderColumnView(
+                ValueKey(widget.pickerModel.currentMiddleIndex() * 100 +
+                    widget.pickerModel.currentLeftIndex()),
+                theme,
+                widget.pickerModel.rightStringAtIndex,
+                rightScrollCtrl,
+                widget.pickerModel.layoutProportions()[2], (index) {
+              widget.pickerModel.setRightIndex(index);
+              _notifyDateChanged();
+            }, null)
+                : null,
+          ),
+        ],
       ),
     );
   }
@@ -457,50 +455,48 @@ class _DatePickerState extends State<_DatePickerComponent> {
         children: [
           if(_label.isNotEmpty)
           Container(
-            height: theme.titleHeight,
+            // height: theme.titleHeight,
             padding: EdgeInsets.only(left: 16, top: 10),
             child: Text(_label),
           ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  height: theme.titleHeight,
-                  child: (!widget.disableCancelButton)? CupertinoButton(
-                    pressedOpacity: 0.3,
-                    padding: EdgeInsets.only(left: 16, top: 0),
-                    child: Text(
-                      '$cancel',
-                      style: theme.cancelStyle,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      if (widget.route.onCancel != null) {
-                        widget.route.onCancel();
-                      }
-                    },
-                  ) : Padding(padding: EdgeInsets.only(left: 16, top: 0)),
-                ),
-                Container(
-                  height: theme.titleHeight,
-                  child: CupertinoButton(
-                    pressedOpacity: 0.3,
-                    padding: EdgeInsets.only(right: 16, top: 0),
-                    child: Text(
-                      '$done',
-                      style: theme.doneStyle,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context, widget.pickerModel.finalTime());
-                      if (widget.route.onConfirm != null) {
-                        widget.route.onConfirm(widget.pickerModel.finalTime());
-                      }
-                    },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                // height: theme.titleHeight,
+                child: (!widget.disableCancelButton)? CupertinoButton(
+                  pressedOpacity: 0.3,
+                  padding: EdgeInsets.only(left: 16, top: 0),
+                  child: Text(
+                    '$cancel',
+                    style: theme.cancelStyle,
                   ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    if (widget.route.onCancel != null) {
+                      widget.route.onCancel();
+                    }
+                  },
+                ) : Padding(padding: EdgeInsets.only(left: 16, top: 0)),
+              ),
+              Container(
+                // height: theme.titleHeight,
+                child: CupertinoButton(
+                  pressedOpacity: 0.3,
+                  padding: EdgeInsets.only(right: 16, top: 0),
+                  child: Text(
+                    '$done',
+                    style: theme.doneStyle,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context, widget.pickerModel.finalTime());
+                    if (widget.route.onConfirm != null) {
+                      widget.route.onConfirm(widget.pickerModel.finalTime());
+                    }
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
