@@ -451,11 +451,12 @@ class _DatePickerState extends State<_DatePickerComponent> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           if(_label.isNotEmpty)
           Container(
             height: theme.titleHeight,
-            padding: EdgeInsets.only(left: 16, top: 0),
+            padding: EdgeInsets.only(left: 16, top: 10),
             child: Text(_label),
           ),
           Row(
