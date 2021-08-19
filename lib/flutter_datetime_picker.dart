@@ -445,7 +445,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
     String cancel = _localeCancel();
     String _label = widget.label ?? "";
     return Container(
-      height: theme.titleHeight,
+      height: 90,
       decoration: BoxDecoration(
         color: theme.headerColor ?? theme.backgroundColor ?? Colors.white,
       ),
