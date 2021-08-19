@@ -373,9 +373,9 @@ class _DatePickerState extends State<_DatePickerComponent> {
   }
 
   Widget _renderItemView(DatePickerTheme theme) {
-    return Flexible(
-      child: Container(
-        color: theme.backgroundColor ?? Colors.white,
+    return Container(
+      color: theme.backgroundColor ?? Colors.white,
+      child: Expanded(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
