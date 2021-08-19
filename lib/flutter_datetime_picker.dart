@@ -30,6 +30,9 @@ class DatePicker {
     locale: LocaleType.en,
     DateTime currentTime,
     DatePickerTheme theme,
+    bool isDismissible: true,
+    bool disableCancelButton,
+    String label,
   }) async {
     return await Navigator.push(
         context,
@@ -40,6 +43,9 @@ class DatePicker {
             onCancel: onCancel,
             locale: locale,
             theme: theme,
+            isDismissible: isDismissible,
+            disableCancelButton: disableCancelButton,
+            label: label,
             barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
             pickerModel: DatePickerModel(
                 currentTime: currentTime, maxTime: maxTime, minTime: minTime, locale: locale)));
@@ -164,6 +170,9 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
     theme,
     this.barrierLabel,
     this.locale,
+    this.isDismissible,
+    this.disableCancelButton,
+    this.label,
     RouteSettings settings,
     pickerModel,
   })  : this.pickerModel = pickerModel ?? DatePickerModel(),
@@ -177,12 +186,15 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
   final DatePickerTheme theme;
   final LocaleType locale;
   final BasePickerModel pickerModel;
+  final bool isDismissible;
+  final bool disableCancelButton;
+  final String label;
 
   @override
   Duration get transitionDuration => const Duration(milliseconds: 200);
 
   @override
-  bool get barrierDismissible => true;
+  bool get barrierDismissible => isDismissible ?? true;
 
   @override
   final String barrierLabel;
@@ -209,6 +221,8 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
         onChanged: onChanged,
         locale: this.locale,
         route: this,
+        label: label,
+        disableCancelButton: disableCancelButton,
         pickerModel: pickerModel,
       ),
     );
@@ -222,7 +236,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
 
 class _DatePickerComponent extends StatefulWidget {
   _DatePickerComponent(
-      {Key key, @required this.route, this.onChanged, this.locale, this.pickerModel});
+      {Key key, @required this.route, this.onChanged, this.locale, this.pickerModel, this.label, this.disableCancelButton = false});
 
   final DateChangedCallback onChanged;
 
@@ -231,6 +245,10 @@ class _DatePickerComponent extends StatefulWidget {
   final LocaleType locale;
 
   final BasePickerModel pickerModel;
+
+  final String label;
+
+  final bool disableCancelButton;
 
   @override
   State<StatefulWidget> createState() {
@@ -425,48 +443,58 @@ class _DatePickerState extends State<_DatePickerComponent> {
   Widget _renderTitleActionsView(DatePickerTheme theme) {
     String done = _localeDone();
     String cancel = _localeCancel();
-
+    String _label = widget.label ?? "";
     return Container(
       height: theme.titleHeight,
       decoration: BoxDecoration(
         color: theme.headerColor ?? theme.backgroundColor ?? Colors.white,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
+      child: Column(
+        children: [
+          if(_label.isNotEmpty)
           Container(
             height: theme.titleHeight,
-            child: CupertinoButton(
-              pressedOpacity: 0.3,
-              padding: EdgeInsets.only(left: 16, top: 0),
-              child: Text(
-                '$cancel',
-                style: theme.cancelStyle,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-                if (widget.route.onCancel != null) {
-                  widget.route.onCancel();
-                }
-              },
-            ),
+            padding: EdgeInsets.only(left: 16, top: 0),
+            child: Text(_label),
           ),
-          Container(
-            height: theme.titleHeight,
-            child: CupertinoButton(
-              pressedOpacity: 0.3,
-              padding: EdgeInsets.only(right: 16, top: 0),
-              child: Text(
-                '$done',
-                style: theme.doneStyle,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                height: theme.titleHeight,
+                child: (!widget.disableCancelButton)? CupertinoButton(
+                  pressedOpacity: 0.3,
+                  padding: EdgeInsets.only(left: 16, top: 0),
+                  child: Text(
+                    '$cancel',
+                    style: theme.cancelStyle,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    if (widget.route.onCancel != null) {
+                      widget.route.onCancel();
+                    }
+                  },
+                ) : Padding(padding: EdgeInsets.only(left: 16, top: 0)),
               ),
-              onPressed: () {
-                Navigator.pop(context, widget.pickerModel.finalTime());
-                if (widget.route.onConfirm != null) {
-                  widget.route.onConfirm(widget.pickerModel.finalTime());
-                }
-              },
-            ),
+              Container(
+                height: theme.titleHeight,
+                child: CupertinoButton(
+                  pressedOpacity: 0.3,
+                  padding: EdgeInsets.only(right: 16, top: 0),
+                  child: Text(
+                    '$done',
+                    style: theme.doneStyle,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context, widget.pickerModel.finalTime());
+                    if (widget.route.onConfirm != null) {
+                      widget.route.onConfirm(widget.pickerModel.finalTime());
+                    }
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -484,17 +512,23 @@ class _DatePickerState extends State<_DatePickerComponent> {
 
 class _BottomPickerLayout extends SingleChildLayoutDelegate {
   _BottomPickerLayout(this.progress, this.theme,
-      {this.itemCount, this.showTitleActions, this.bottomPadding = 0});
+      {this.itemCount, this.showTitleActions, this.bottomSheetLabel, this.bottomPadding = 0});
 
   final double progress;
   final int itemCount;
   final bool showTitleActions;
+  final String bottomSheetLabel;
   final DatePickerTheme theme;
   final double bottomPadding;
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     double maxHeight = theme.containerHeight;
+
+    if (bottomSheetLabel != null && bottomSheetLabel.isNotEmpty){
+      maxHeight += theme.titleHeight;
+    }
+
     if (showTitleActions) {
       maxHeight += theme.titleHeight;
     }
