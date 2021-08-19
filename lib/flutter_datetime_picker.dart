@@ -31,7 +31,7 @@ class DatePicker {
     DateTime currentTime,
     DatePickerTheme theme,
     bool isDismissible: true,
-    bool disableCancelButton,
+    bool disableCancelButton : false,
     String label,
   }) async {
     return await Navigator.push(
@@ -171,7 +171,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
     this.barrierLabel,
     this.locale,
     this.isDismissible,
-    this.disableCancelButton,
+    this.disableCancelButton = false,
     this.label,
     RouteSettings settings,
     pickerModel,
@@ -445,11 +445,12 @@ class _DatePickerState extends State<_DatePickerComponent> {
     String cancel = _localeCancel();
     String _label = widget.label ?? "";
     return Container(
-      height: theme.titleHeight,
       decoration: BoxDecoration(
         color: theme.headerColor ?? theme.backgroundColor ?? Colors.white,
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if(_label.isNotEmpty)
           Container(
