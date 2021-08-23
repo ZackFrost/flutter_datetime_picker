@@ -31,7 +31,7 @@ class DatePicker {
     DateTime currentTime,
     DatePickerTheme theme,
     bool isDismissible: true,
-    bool disableCancelButton : false,
+    bool enableCancelButton : false,
     Widget titleWidget,
   }) async {
     return await Navigator.push(
@@ -44,7 +44,7 @@ class DatePicker {
             locale: locale,
             theme: theme,
             isDismissible: isDismissible,
-            disableCancelButton: disableCancelButton,
+            enableCancelButton: enableCancelButton,
             titleWidget: titleWidget,
             barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
             pickerModel: DatePickerModel(
@@ -171,7 +171,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
     this.barrierLabel,
     this.locale,
     this.isDismissible,
-    this.disableCancelButton = false,
+    this.enableCancelButton,
     this.titleWidget,
     RouteSettings settings,
     pickerModel,
@@ -187,7 +187,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
   final LocaleType locale;
   final BasePickerModel pickerModel;
   final bool isDismissible;
-  final bool disableCancelButton;
+  final bool enableCancelButton;
   final Widget titleWidget;
 
   @override
@@ -222,7 +222,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
         locale: this.locale,
         route: this,
         titleWidget: titleWidget,
-        disableCancelButton: disableCancelButton,
+        enableCancelButton: enableCancelButton,
         pickerModel: pickerModel,
       ),
     );
@@ -236,13 +236,13 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
 
 class _DatePickerComponent extends StatefulWidget {
   _DatePickerComponent(
-      {Key key, @required this.route, this.onChanged, this.locale, this.pickerModel, this.disableCancelButton = false, this.titleWidget, });
+      {Key key, @required this.route, this.onChanged, this.locale, this.pickerModel, this.enableCancelButton = false, this.titleWidget, });
 
   final DateChangedCallback onChanged;
   final _DatePickerRoute route;
   final LocaleType locale;
   final BasePickerModel pickerModel;
-  final bool disableCancelButton;
+  final bool enableCancelButton;
   final Widget titleWidget;
 
   @override
@@ -439,6 +439,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
   Widget _renderTitleActionsView(DatePickerTheme theme) {
     String done = _localeDone();
     String cancel = _localeCancel();
+    Widget titleWidget = widget.titleWidget;
     return Container(
       decoration: BoxDecoration(
         color: theme.headerColor ?? theme.backgroundColor ?? Colors.white,
@@ -448,14 +449,15 @@ class _DatePickerState extends State<_DatePickerComponent> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if(widget.titleWidget !=null)
-            widget.titleWidget,
+          if(titleWidget != null && widget.enableCancelButton)
+            titleWidget,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
+              (widget.enableCancelButton)?
               Container(
                 // height: theme.titleHeight,
-                child: (!widget.disableCancelButton)? CupertinoButton(
+                child:  CupertinoButton(
                   pressedOpacity: 0.3,
                   padding: EdgeInsets.only(left: 16, top: 0),
                   child: Text(
@@ -468,8 +470,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
                       widget.route.onCancel();
                     }
                   },
-                ) : Padding(padding: EdgeInsets.only(left: 16, top: 0)),
-              ),
+                )) : (titleWidget != null)? titleWidget : Padding(padding: EdgeInsets.only(left: 16, top: 0)),
               Container(
                 // height: theme.titleHeight,
                 child: CupertinoButton(
