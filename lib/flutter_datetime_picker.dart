@@ -171,7 +171,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
     this.barrierLabel,
     this.locale,
     this.isDismissible,
-    this.enableCancelButton,
+    this.enableCancelButton = false,
     this.titleWidget,
     RouteSettings settings,
     pickerModel,
